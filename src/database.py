@@ -13,6 +13,13 @@ async def connect_to_mongo():
         mongo_uri = os.getenv("MONGO_URI")
         MongoDB.client = AsyncIOMotorClient(mongo_uri)
 
+        db = MongoDB.client[mongo_db_name]
+
+        collection = db[mongo_db_name]
+
+        result = await collection.create_index([("title", "text"), ("author", "text"), ("description", "text")])
+        print(result)
+
 async def close_mongo_connection():
     if MongoDB.client is not None:
         MongoDB.client.close()

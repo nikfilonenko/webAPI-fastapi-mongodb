@@ -64,6 +64,27 @@ async def delete_book(book_id: str, db: AsyncIOMotorDatabase = Depends(get_datab
 
 
 
+@router.delete("/books/", response_model=None)
+async def delete_all_books(title: str, db: AsyncIOMotorDatabase = Depends(get_database)):
+    await db.books.delete_many(filter=title)
+
+    return JSONResponse(content={f"message": f"All books with title {title} deleted successfully"}, status_code=200)
+
+
+
+# Поиск по текстовым индексам
+@router.get("/books/search/{query}", response_model=List[BookInDB])
+async def search_books(query: str, db: AsyncIOMotorDatabase = Depends(get_database)):
+    result = await db.books.find(
+        {"$text": {"$search": query}},
+        {"score": {"$meta": "textScore"}}
+    ).sort([("score", {"$meta": "textScore"})]).to_list(1000)
+
+    return [BookInDB(**book, id=str(book["_id"])) for book in result]
+
+
+
+
 # Аггрегация
 @router.get("/books/average_price")
 async def get_average_book_price(db: AsyncIOMotorDatabase = Depends(get_database)):
@@ -78,12 +99,3 @@ async def get_average_book_price(db: AsyncIOMotorDatabase = Depends(get_database
         return {"average_price": average_price}
     else:
         return {"average_price": 0.0}
-
-
-
-@router.delete("/books/", response_model=None)
-async def delete_all_books(db: AsyncIOMotorDatabase = Depends(get_database)):
-    await db.books.delete_many()
-
-    return JSONResponse(content={"message": "All books deleted successfully"}, status_code=200)
-
