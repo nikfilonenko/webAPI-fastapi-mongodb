@@ -1,15 +1,22 @@
 import asyncio
+import os
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from faker import Faker
 from datetime import datetime
 import random
 
+load_dotenv()
+
 fake = Faker()
 
 async def generate_data():
-    client = AsyncIOMotorClient('mongodb://localhost:27017/')
-    db = client['books']
-    collection = db['books']
+    mongo_db_name = os.getenv("MONGO_DB_NAME")
+    mongo_uri = os.getenv("MONGO_URI")
+
+    client = AsyncIOMotorClient(mongo_uri)
+    db = client[mongo_db_name]
+    collection = db[mongo_db_name]
 
     for _ in range(10000):
         document = {
