@@ -4,10 +4,8 @@ import os
 
 load_dotenv()
 
-
 class MongoDB:
     client: AsyncIOMotorClient = None
-
 
 async def connect_to_mongo():
     if MongoDB.client is None:
@@ -15,11 +13,9 @@ async def connect_to_mongo():
         mongo_uri = os.getenv("MONGO_URI")
         MongoDB.client = AsyncIOMotorClient(mongo_uri)
 
-
 async def close_mongo_connection():
     if MongoDB.client is not None:
         MongoDB.client.close()
-
 
 async def get_database() -> AsyncIOMotorDatabase:
     return MongoDB.client[os.getenv("MONGO_DB_NAME")]

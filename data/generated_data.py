@@ -7,7 +7,6 @@ from datetime import datetime
 import random
 
 load_dotenv()
-
 fake = Faker()
 
 async def generate_data():
@@ -19,15 +18,30 @@ async def generate_data():
     collection = db[mongo_db_name]
 
     for _ in range(10000):
-        document = {
+        product_model_data = {
+            'name': fake.word(),
+            'description': fake.sentence(),
+        }
+        publisher_data = {
+            'name': fake.company(),
+        }
+        book_data = {
             'title': fake.sentence(),
             'author': fake.name(),
-            'published': datetime.combine(fake.date_this_decade(), datetime.min.time()),
             'price': round(random.uniform(10, 100), 2),
-            'quantity': random.randint(1, 100),
+            'published': datetime.combine(fake.date_this_decade(), datetime.min.time()),
+            'publisher': publisher_data,
+            'product_model': product_model_data,
         }
-        await collection.insert_one(document)
+
+        product_model_result = await db.product_models.insert_one(product_model_data)
+        publisher_result = await db.publishers.insert_one(publisher_data)
+        book_data['publisher']['id'] = str(publisher_result.inserted_id)
+        book_data['product_model']['id'] = str(product_model_result.inserted_id)
+        book_result = await collection.insert_one(book_data)
 
     print("Генерация данных завершена.")
 
-asyncio.run(generate_data())
+
+if __name__ == "__main__":
+    asyncio.run(generate_data())
