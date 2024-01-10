@@ -12,8 +12,12 @@
 
 ![image](https://github.com/nikfilonenko/webAPI-fastapi-mongodb/assets/103507130/0f16043f-aeab-4e16-b5d3-84daa93f7f88)
 
-## 2. Проект
+## 2. Запуск проекта Проект
 
 - Необходимо установить все необходимые зависимости с помощью команды:
 
 ```pip install -r requirements.txt```
+
+- После успешной установки модулей, следует запустить сервер `uvicorn` следующей командой:
+
+```uvicorn src.main:app --reload```
