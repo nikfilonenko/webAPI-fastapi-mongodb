@@ -3,7 +3,9 @@ from fastapi import FastAPI
 from src.routers import book, publisher, product_model
 from src.database import connect_to_mongo, close_mongo_connection
 
-app = FastAPI()
+app = FastAPI(
+    title="Book Retail API"
+)
 
 app.include_router(book.router)
 app.include_router(publisher.router)
