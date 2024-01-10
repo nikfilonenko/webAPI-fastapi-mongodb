@@ -22,7 +22,7 @@ async def read_book(book_id: str, db: AsyncIOMotorDatabase = Depends(get_databas
 
 
 @router.post("/books/", response_model=BookInDB)
-async def create_book(book: Book, db: AsyncIOMotorDatabase = Depends(get_database())):
+async def create_book(book: Book, db: AsyncIOMotorDatabase = Depends(get_database)):
     result = await db.books.insert_one(book.model_dump())
     created_book = await db.books.find_one({"_id": result.inserted_id})
 
@@ -53,6 +53,21 @@ async def delete_book(book_id: str, db: AsyncIOMotorDatabase = Depends(get_datab
         return [BookInDB(**book, id=str(book["_id"])) for book in books]
     else:
         raise HTTPException(status_code=404, detail="Book not found")
+
+
+
+# Аггрегация
+@router.get("/books/average_price")
+async def get_average_book_price(db: AsyncIOMotorDatabase = Depends(get_database)):
+    pipeline = [
+        {"$group": {"_id": None, "average_price": {"$avg": "$price"}}}
+    ]
+
+    result = await db.books.aggregate(pipeline).to_list(1)
+    average_price = result[0]["average_price"] if result else 0.0
+
+    return {"average_price": average_price}
+
 
 
 @router.delete("/books/", response_model=List[BookInDB])

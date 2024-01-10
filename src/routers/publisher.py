@@ -9,5 +9,6 @@ router = APIRouter()
 @router.get("/publishers/", response_model=List[PublisherInDB])
 async def get_all_publishers(db: AsyncIOMotorDatabase = Depends(get_database)):
     publishers = await db.publishers.find().to_list(1000)
+
     return [PublisherInDB(**publisher, id=str(publisher["_id"])) for publisher in publishers]
 
