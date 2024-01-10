@@ -1,10 +1,8 @@
-from decimal import Decimal
 from pydantic import BaseModel
 from datetime import datetime
 
 
 class ProductModel(BaseModel):
-    name: str
     description: str
 
 
@@ -15,7 +13,7 @@ class Publisher(BaseModel):
 class Book(BaseModel):
     title: str
     author: str
-    price: Decimal
+    price: float
     published: datetime
     publisher: Publisher
     product_model: ProductModel

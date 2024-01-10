@@ -19,7 +19,6 @@ async def generate_data():
 
     for _ in range(10000):
         product_model_data = {
-            'name': fake.word(),
             'description': fake.sentence(),
         }
         publisher_data = {
