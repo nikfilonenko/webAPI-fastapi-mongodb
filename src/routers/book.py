@@ -86,7 +86,7 @@ async def search_books(query: str, db: AsyncIOMotorDatabase = Depends(get_databa
 
 
 # Аггрегация
-@router.get("/books/average_price")
+@router.get("/books", response_model=dict)
 async def get_average_book_price(db: AsyncIOMotorDatabase = Depends(get_database)):
     pipeline = [
         {"$group": {"_id": None, "average_price": {"$avg": "$price"}}}
