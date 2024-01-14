@@ -66,9 +66,13 @@ async def delete_book(book_id: str, db: AsyncIOMotorDatabase = Depends(get_datab
 
 @router.delete("/books/", response_model=None)
 async def delete_all_books(title: str, db: AsyncIOMotorDatabase = Depends(get_database)):
-    await db.books.delete_many(filter=title)
+    filter_criteria = {"title": title}
+    result = await db.books.delete_many(filter=filter_criteria)
 
-    return JSONResponse(content={f"message": f"All books with title {title} deleted successfully"}, status_code=200)
+    return JSONResponse(
+        content={"message": f"All books with title {title} deleted successfully. Deleted count: {result.deleted_count}"},
+        status_code=200
+    )
 
 
 
